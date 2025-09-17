@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<body>
+<main layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Category List</h3>
+        <a th:href="@{/categories/new}" class="btn btn-primary">+ Add New</a>
+    </div>
+
+    <form th:action="@{/categories}" method="get" class="mb-3 d-flex">
+        <input type="text" name="keyword" th:value="${keyword}" class="form-control me-2" placeholder="Search..."/>
+        <button type="submit" class="btn btn-outline-secondary">Search</button>
+    </form>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th><th>Name</th><th>Description</th><th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cat : ${categoryPage.content}">
+            <td th:text="${cat.id}"></td>
+            <td th:text="${cat.name}"></td>
+            <td th:text="${cat.description}"></td>
+            <td>
+                <a th:href="@{'/categories/edit/' + ${cat.id}}" class="btn btn-sm btn-warning">Edit</a>
+                <a th:href="@{'/categories/delete/' + ${cat.id}}" 
+                   class="btn btn-sm btn-danger"
+                   onclick="return confirm('Are you sure you want to delete this?')">Delete</a>
+            </td>
+        </tr>
+        <tr th:if="${categoryPage.totalElements == 0}">
+            <td colspan="4" class="text-center">No categories found</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <nav th:if="${categoryPage.totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${!categoryPage.hasPrevious()} ? 'disabled'">
+                <a class="page-link" th:href="@{/categories(page=${categoryPage.number - 1}, keyword=${keyword})}">Previous</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link"
+                      th:text="'Page ' + ${categoryPage.number + 1} + ' of ' + ${categoryPage.totalPages}"></span>
+            </li>
+            <li class="page-item" th:classappend="${!categoryPage.hasNext()} ? 'disabled'">
+                <a class="page-link" th:href="@{/categories(page=${categoryPage.number + 1}, keyword=${keyword})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</main>
+</body>
+</html>
